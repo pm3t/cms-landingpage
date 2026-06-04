@@ -121,7 +121,6 @@ vercel --prod
 |---|---|
 | `index.html` | Landing page (static) |
 | `api/submit.js` | Vercel Serverless Function (Node.js) — proxy ke Google Script |
-| `vercel.json` | Konfigurasi runtime function |
 | `.env.example` | Template env (tidak dipakai Vercel) |
 | `gsheet-webhook.gs` | Google Apps Script (tidak ikut diupload ke Vercel) |
 
