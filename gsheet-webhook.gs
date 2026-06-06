@@ -17,7 +17,7 @@ function doPost(e) {
     // header otomatis
     if (sheet.getLastRow() === 0) {
       sheet.appendRow([
-        'Timestamp', 'Gereja', 'Kota', 'PIC', 'WhatsApp', 'Jumlah Jemaat', 'Denominasi'
+        'Timestamp', 'Gereja', 'Kota', 'PIC', 'WhatsApp', 'Email', 'Jumlah Jemaat', 'Denominasi'
       ]);
     }
 
@@ -28,6 +28,7 @@ function doPost(e) {
       data.kota,
       data.pic,
       data.wa,
+      data.email,
       data.jumlah_jemaat,
       data.denominasi
     ]);
