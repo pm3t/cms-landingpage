@@ -1,856 +1,1652 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Eklesia — Sistem Manajemen Gereja Modern</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --gold: #C9972B;
-    --gold-light: #F0C96A;
-    --dark: #0E0E0E;
-    --deep: #141008;
-    --muted: rgba(255,255,255,0.45);
-    --border: rgba(201,151,43,0.15);
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body { background: var(--dark); color: #fff; font-family: 'DM Sans', sans-serif; font-weight: 300; overflow-x: hidden; }
-
-  nav {
-    position: fixed; top: 0; width: 100%; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1.1rem 5%;
-    background: rgba(14,14,14,0.92); backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--border);
-  }
-  .logo { font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 700; color: var(--gold); }
-  .logo span { color: #fff; }
-  nav ul { list-style: none; display: flex; gap: 2rem; }
-  nav a { color: rgba(255,255,255,0.65); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; transition: color 0.2s; }
-  nav a:hover { color: var(--gold); }
-  .nav-cta { background: var(--gold) !important; color: var(--dark) !important; padding: 0.5rem 1.3rem; border-radius: 2px; font-weight: 500 !important; }
-  .nav-cta:hover { background: var(--gold-light) !important; }
-
-  .hero {
-    min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
-    text-align: center; padding: 8rem 5% 5rem; position: relative; overflow: hidden;
-  }
-  .hero::before {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201,151,43,0.13) 0%, transparent 65%),
-                radial-gradient(ellipse 35% 35% at 15% 85%, rgba(201,151,43,0.07) 0%, transparent 60%);
-  }
-  .hero-badge { display: inline-block; border: 1px solid rgba(201,151,43,0.5); color: var(--gold); font-size: 0.76rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.4rem 1rem; border-radius: 2px; margin-bottom: 2rem; animation: fadeUp 0.8s ease both; }
-  .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 7.5vw, 6rem); font-weight: 900; line-height: 1.0; max-width: 880px; animation: fadeUp 0.8s 0.15s ease both; }
-  .hero h1 em { font-style: italic; color: var(--gold); }
-  .hero p { max-width: 520px; margin: 1.8rem auto; font-size: 1.05rem; line-height: 1.75; color: var(--muted); animation: fadeUp 0.8s 0.3s ease both; }
-  .hero-stats { display: flex; gap: 3rem; justify-content: center; flex-wrap: wrap; margin: 2rem 0; animation: fadeUp 0.8s 0.4s ease both; }
-  .stat { text-align: center; }
-  .stat-num { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--gold); font-weight: 700; display: block; }
-  .stat-label { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-  .hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; animation: fadeUp 0.8s 0.5s ease both; }
-  .btn-primary { background: var(--gold); color: var(--dark); padding: 0.9rem 2.2rem; border-radius: 2px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 500; text-decoration: none; letter-spacing: 0.03em; transition: all 0.2s; display: inline-block; }
-  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
-  .btn-secondary { border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 0.9rem 2.2rem; border-radius: 2px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; text-decoration: none; transition: all 0.2s; display: inline-block; }
-  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
-  .hero-note { margin-top: 1.2rem; font-size: 0.8rem; color: rgba(255,255,255,0.3); animation: fadeUp 0.8s 0.6s ease both; }
-
-  .section { padding: 6rem 5%; }
-  .section-label { font-size: 0.74rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem; }
-  .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.9rem, 4vw, 3.2rem); line-height: 1.15; }
-
-  .pain { background: var(--deep); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-  .pain-inner { max-width: 960px; margin: 0 auto; text-align: center; }
-  .pain-inner p.lead { color: var(--muted); font-size: 1.05rem; line-height: 1.8; max-width: 580px; margin: 1.2rem auto 3rem; }
-  .pain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05); }
-  .pain-item { background: var(--deep); padding: 2rem 1.5rem; text-align: left; transition: background 0.2s; }
-  .pain-item:hover { background: rgba(201,151,43,0.04); }
-  .pain-icon { font-size: 1.6rem; margin-bottom: 0.8rem; }
-  .pain-item h4 { font-size: 0.92rem; font-weight: 500; margin-bottom: 0.4rem; }
-  .pain-item p { font-size: 0.8rem; color: var(--muted); line-height: 1.65; }
-
-  .features-wrap { max-width: 1140px; margin: 0 auto; }
-  .features-header { text-align: center; margin-bottom: 4rem; }
-  .features-header p.sub { color: var(--muted); margin-top: 1rem; font-size: 1rem; }
-
-  .mod-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-bottom: 3rem; }
-  .mod-tab { background: none; border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); font-family: 'DM Sans', sans-serif; font-size: 0.8rem; padding: 0.5rem 1.1rem; border-radius: 2px; cursor: pointer; transition: all 0.2s; letter-spacing: 0.03em; }
-  .mod-tab:hover { border-color: rgba(201,151,43,0.4); color: var(--gold-light); }
-  .mod-tab.active { background: var(--gold); color: var(--dark); border-color: var(--gold); font-weight: 500; }
-
-  .feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 1.5rem; }
-  .feat-card { border: 1px solid rgba(201,151,43,0.1); padding: 2rem; border-radius: 4px; background: rgba(255,255,255,0.02); position: relative; overflow: hidden; transition: border-color 0.3s, background 0.3s; display: none; }
-  .feat-card.visible { display: block; animation: cardIn 0.4s ease both; }
-  .feat-card::after { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 0; background: var(--gold); transition: height 0.3s; }
-  .feat-card:hover { border-color: rgba(201,151,43,0.3); background: rgba(201,151,43,0.04); }
-  .feat-card:hover::after { height: 100%; }
-  .feat-icon { font-size: 2rem; margin-bottom: 1rem; }
-  .feat-card h3 { font-size: 1.05rem; font-weight: 500; margin-bottom: 0.7rem; line-height: 1.3; }
-  .feat-card .desc { font-size: 0.88rem; color: rgba(255,255,255,0.65); line-height: 1.75; margin-bottom: 1.1rem; }
-  .feat-sub-list { display: flex; flex-direction: column; gap: 0.4rem; }
-  .feat-sub-list li { font-size: 0.81rem; color: rgba(255,255,255,0.42); padding-left: 1rem; position: relative; list-style: none; line-height: 1.5; }
-  .feat-sub-list li::before { content: '→'; position: absolute; left: 0; color: var(--gold); font-size: 0.7rem; top: 0.1em; }
-
-  .pilot { background: linear-gradient(135deg, rgba(201,151,43,0.13) 0%, rgba(201,151,43,0.02) 100%); border-top: 1px solid rgba(201,151,43,0.3); border-bottom: 1px solid rgba(201,151,43,0.3); }
-  .pilot-inner { max-width: 680px; margin: 0 auto; text-align: center; }
-  .pilot-inner h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.8rem); margin-bottom: 1rem; }
-  .pilot-inner h2 em { font-style: italic; color: var(--gold); }
-  .pilot-inner > p { color: var(--muted); font-size: 1rem; line-height: 1.8; margin-bottom: 2rem; }
-  .pilot-benefits { display: flex; flex-wrap: wrap; gap: 0.7rem; justify-content: center; margin-bottom: 2.5rem; }
-  .benefit-tag { background: rgba(201,151,43,0.1); border: 1px solid rgba(201,151,43,0.3); color: var(--gold-light); padding: 0.45rem 1rem; border-radius: 2px; font-size: 0.8rem; }
-  .form-box { background: rgba(0,0,0,0.3); border: 1px solid rgba(201,151,43,0.2); padding: 2rem; border-radius: 4px; }
-  .form-row { display: flex; gap: 1rem; flex-wrap: wrap; }
-  .form-group { flex: 1; min-width: 195px; text-align: left; }
-  .form-group label { display: block; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 0.5rem; }
-  .form-group input, .form-group select { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.75rem 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; border-radius: 2px; outline: none; transition: border-color 0.2s; }
-  .form-group input:focus, .form-group select:focus { border-color: var(--gold); }
-  .form-group select option { background: #1a1a1a; }
-  .form-submit { margin-top: 1.2rem; width: 100%; background: var(--gold); color: var(--dark); padding: 1rem; border: none; border-radius: 2px; font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 500; cursor: pointer; transition: background 0.2s; }
-  .form-submit:hover { background: var(--gold-light); }
-  .form-note { font-size: 0.76rem; color: rgba(255,255,255,0.28); margin-top: 0.8rem; }
-
-  .pricing-wrap { max-width: 1000px; margin: 0 auto; }
-  .pricing-header { text-align: center; margin-bottom: 3.5rem; }
-  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
-  .price-card { border: 1px solid rgba(255,255,255,0.08); padding: 2.2rem; border-radius: 4px; position: relative; transition: border-color 0.3s; }
-  .price-card:hover { border-color: rgba(201,151,43,0.25); }
-  .price-card.featured { border-color: var(--gold); background: rgba(201,151,43,0.05); }
-  .price-card.featured::before { content: 'Paling Populer'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--gold); color: var(--dark); font-size: 0.68rem; font-weight: 500; padding: 0.25rem 0.8rem; border-radius: 2px; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
-  .plan-name { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem; }
-  .plan-price { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 700; }
-  .plan-price span { font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 300; color: var(--muted); }
-  .plan-desc { font-size: 0.82rem; color: var(--muted); margin: 0.8rem 0 1.5rem; line-height: 1.6; }
-  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2rem; }
-  .plan-features li { font-size: 0.83rem; color: rgba(255,255,255,0.65); padding-left: 1.2rem; position: relative; }
-  .plan-features li::before { content: '✓'; position: absolute; left: 0; color: var(--gold); font-size: 0.75rem; }
-  .plan-features li.off { color: rgba(255,255,255,0.25); }
-  .plan-features li.off::before { content: '—'; color: rgba(255,255,255,0.2); }
-  .plan-btn { display: block; text-align: center; padding: 0.8rem; border-radius: 2px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; text-decoration: none; transition: all 0.2s; }
-  .plan-btn-outline { border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.6); }
-  .plan-btn-outline:hover { border-color: var(--gold); color: var(--gold); }
-  .plan-btn-solid { background: var(--gold); color: var(--dark); font-weight: 500; }
-  .plan-btn-solid:hover { background: var(--gold-light); }
-
-  .script-section { background: #111; border-top: 1px solid rgba(255,255,255,0.05); }
-  .script-inner { max-width: 800px; margin: 0 auto; }
-  .script-inner > p.sub { color: var(--muted); margin-bottom: 3rem; font-size: 0.95rem; }
-  .script-tabs { display: flex; gap: 0; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
-  .tab-btn { background: none; border: none; color: rgba(255,255,255,0.4); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; padding: 0.8rem 1.5rem; cursor: pointer; letter-spacing: 0.05em; text-transform: uppercase; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.2s; }
-  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-  .script-block { background: rgba(255,255,255,0.02); border-left: 3px solid var(--gold); padding: 1.5rem 2rem; margin-bottom: 1.5rem; border-radius: 0 4px 4px 0; }
-  .script-block .speaker { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.6rem; }
-  .script-block p { font-size: 0.93rem; line-height: 1.9; color: rgba(255,255,255,0.78); }
-  .script-block p strong { color: #fff; font-weight: 500; }
-  .script-tip { background: rgba(201,151,43,0.07); border: 1px solid rgba(201,151,43,0.2); padding: 1rem 1.5rem; border-radius: 4px; font-size: 0.83rem; color: rgba(255,255,255,0.55); margin-bottom: 1.5rem; }
-  .script-tip strong { color: var(--gold-light); }
-
-  .brand-section { border-top: 1px solid rgba(255,255,255,0.05); }
-  .brand-inner { max-width: 860px; margin: 0 auto; }
-  .brand-inner > p.sub { color: var(--muted); margin-bottom: 3rem; font-size: 0.95rem; }
-  .brand-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; }
-  .brand-card { border: 1px solid rgba(255,255,255,0.07); padding: 1.5rem; border-radius: 4px; transition: border-color 0.2s; }
-  .brand-card:hover { border-color: rgba(201,151,43,0.35); }
-  .brand-name { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--gold); margin-bottom: 0.4rem; }
-  .brand-tagline { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.7rem; font-style: italic; }
-  .brand-reason { font-size: 0.78rem; color: rgba(255,255,255,0.32); line-height: 1.6; }
-  .brand-badge { display: inline-block; background: var(--gold); color: var(--dark); font-size: 0.62rem; font-weight: 500; padding: 0.2rem 0.5rem; border-radius: 2px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
-
-  footer { padding: 2.5rem 5%; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); color: rgba(255,255,255,0.22); font-size: 0.8rem; }
-  footer span { color: var(--gold); }
-
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes cardIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-  .reveal { opacity: 0; transform: translateY(28px); transition: all 0.65s ease; }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-
-  @media(max-width:640px) {
-    nav ul { display: none; }
-    .hero-stats { gap: 1.5rem; }
-    .section { padding: 3rem 5%; }
-    .features-header { margin-bottom: 2rem; }
-    .mod-tabs { gap: 0.35rem; margin-bottom: 1.5rem; }
-    .mod-tab { font-size: 0.72rem; padding: 0.35rem 0.8rem; }
-    .pricing-header { margin-bottom: 2rem; }
-    .pain-inner p.lead { margin-bottom: 1.5rem; }
-  }
-</style>
-</head>
-<body>
-
-<nav>
-  <div class="logo">Ekle<span>sia</span></div>
-  <ul>
-    <li><a href="#fitur">Fitur</a></li>
-    <li><a href="#harga">Harga</a></li>
-    <li><a href="#pilot">Program Pilot</a></li>
-  </ul>
-  <a href="#pilot" class="nav-cta">Daftar Gratis</a>
-</nav>
-
-<section class="hero">
-  <div class="hero-badge">✦ Platform Gereja Terlengkap di Indonesia</div>
-  <h1>Satu Platform untuk<br><em>Semua Kebutuhan</em><br>Gereja Modern</h1>
-  <p>Dari administrasi jemaat hingga keuangan, pelayanan pastoral, kelompok sel, dan aplikasi untuk jemaat — semua tersedia dalam satu tempat.</p>
-  <div class="hero-stats">
-    <div class="stat"><span class="stat-num">14+</span><span class="stat-label">Modul Fitur</span></div>
-    <div class="stat"><span class="stat-num">50+</span><span class="stat-label">Sub-Fitur</span></div>
-    <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Data Aman & Terpisah</span></div>
-  </div>
-  <div class="hero-cta">
-    <a href="#pilot" class="btn-primary">Daftar Program Pilot Gratis →</a>
-    <a href="#fitur" class="btn-secondary">Jelajahi Fitur</a>
-  </div>
-  <p class="hero-note">Gratis 3 bulan · Tanpa biaya apapun · Dibantu tim kami dari awal</p>
-</section>
-
-<section class="section pain">
-  <div class="pain-inner reveal">
-    <p class="section-label">Masalah yang kami selesaikan</p>
-    <h2 class="section-title">Masih kewalahan mengurus<br>administrasi gereja?</h2>
-    <p class="lead">Banyak pengurus gereja menghabiskan waktu berjam-jam hanya untuk mencatat, merekap, dan mencari data — padahal waktu itu seharusnya untuk melayani jemaat.</p>
-    <div class="pain-grid">
-      <div class="pain-item">
-        <div class="pain-icon">📋</div>
-        <h4>Data jemaat berserakan</h4>
-        <p>Biodata dicatat di buku, spreadsheet, dan kertas berbeda. Sulit dicari saat dibutuhkan.</p>
-      </div>
-      <div class="pain-item">
-        <div class="pain-icon">💰</div>
-        <h4>Rekap keuangan menyita waktu</h4>
-        <p>Menghitung persembahan dan membuat laporan keuangan masih dikerjakan manual setiap minggu.</p>
-      </div>
-      <div class="pain-item">
-        <div class="pain-icon">📅</div>
-        <h4>Jadwal pelayanan sering bentrok</h4>
-        <p>Pengumuman jadwal lewat WhatsApp sering terlewat dan menyebabkan miskomunikasi.</p>
-      </div>
-      <div class="pain-item">
-        <div class="pain-icon">🏢</div>
-        <h4>Ruangan dobel-booking</h4>
-        <p>Tidak ada catatan terpusat, sehingga dua kelompok bisa memesan ruangan di waktu yang sama.</p>
-      </div>
-      <div class="pain-item">
-        <div class="pain-icon">🤝</div>
-        <h4>Catatan pastoral mudah hilang</h4>
-        <p>Riwayat kunjungan dan percakapan konseling tersimpan di catatan pribadi yang rawan hilang.</p>
-      </div>
-      <div class="pain-item">
-        <div class="pain-icon">📱</div>
-        <h4>Jemaat sulit mendapat informasi</h4>
-        <p>Tidak ada kanal resmi yang mudah diakses jemaat selain grup WhatsApp yang penuh notifikasi.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section" id="fitur">
-  <div class="features-wrap reveal">
-    <div class="features-header">
-      <p class="section-label">Solusi Lengkap</p>
-      <h2 class="section-title">14+ Modul, 50+ Fitur —<br>Dirancang untuk Gereja Indonesia</h2>
-      <p class="sub">Klik kategori di bawah untuk melihat fitur secara detail</p>
-    </div>
-
-    <div class="mod-tabs">
-      <button class="mod-tab active" onclick="filterMod('all', this)">Semua</button>
-      <button class="mod-tab" onclick="filterMod('membership', this)">👥 Data Jemaat</button>
-      <button class="mod-tab" onclick="filterMod('attendance', this)">✅ Kehadiran</button>
-      <button class="mod-tab" onclick="filterMod('event', this)">📅 Acara</button>
-      <button class="mod-tab" onclick="filterMod('announcement', this)">📢 Pengumuman</button>
-      <button class="mod-tab" onclick="filterMod('finance', this)">💰 Keuangan</button>
-      <button class="mod-tab" onclick="filterMod('document', this)">📄 Arsip</button>
-      <button class="mod-tab" onclick="filterMod('facility', this)">🏢 Fasilitas</button>
-      <button class="mod-tab" onclick="filterMod('analytics', this)">📊 Laporan</button>
-      <button class="mod-tab" onclick="filterMod('mobile', this)">📱 Aplikasi Jemaat</button>
-      <button class="mod-tab" onclick="filterMod('messaging', this)">💬 Komunikasi</button>
-      <button class="mod-tab" onclick="filterMod('digital', this)">📻 Digital</button>
-      <button class="mod-tab" onclick="filterMod('pastoral', this)">🤝 Pastoral</button>
-      <button class="mod-tab" onclick="filterMod('smallgroup', this)">🏠 Kelompok Sel</button>
-      <button class="mod-tab" onclick="filterMod('ministry', this)">🙋 Pelayanan</button>
-      <button class="mod-tab" onclick="filterMod('saas', this)">⚙️ Pengaturan</button>
-    </div>
-
-    <div class="feat-grid">
-
-      <!-- DATA JEMAAT -->
-      <div class="feat-card visible" data-mod="membership">
-        <div class="feat-icon">👤</div>
-        <h3>Buku Data Jemaat Digital</h3>
-        <p class="desc">Simpan biodata lengkap seluruh jemaat dalam satu tempat yang rapi dan mudah dicari. Tidak perlu lagi buka-buka buku catatan atau file Excel yang berserakan.</p>
-        <ul class="feat-sub-list">
-          <li>Simpan nama, kontak, kategori, dan status keanggotaan</li>
-          <li>Riwayat baptis dan sidi tercatat otomatis</li>
-          <li>Cari data jemaat dalam hitungan detik</li>
-        </ul>
-      </div>
-
-      <div class="feat-card visible" data-mod="membership">
-        <div class="feat-icon">🏠</div>
-        <h3>Kartu Keluarga Jemaat</h3>
-        <p class="desc">Kelompokkan anggota jemaat dalam satu unit keluarga. Jika alamat kepala keluarga diperbarui, semua anggota ikut terupdate secara otomatis — tidak perlu mengedit satu per satu.</p>
-        <ul class="feat-sub-list">
-          <li>Gabungkan beberapa jemaat dalam satu keluarga</li>
-          <li>Tetapkan kepala keluarga</li>
-          <li>Perubahan alamat menyebar otomatis ke seluruh anggota</li>
-        </ul>
-      </div>
-
-      <!-- KEHADIRAN -->
-      <div class="feat-card visible" data-mod="attendance">
-        <div class="feat-icon">📅</div>
-        <h3>Jadwal & Pengaturan Ibadah</h3>
-        <p class="desc">Buat jadwal ibadah mingguan, hari raya, atau ibadah khusus dengan mudah. Setelah jadwal dibuat, kode QR untuk absensi langsung tersedia dan siap dicetak.</p>
-        <ul class="feat-sub-list">
-          <li>Atur nama, tanggal, dan jam ibadah</li>
-          <li>Kode QR absensi otomatis tersedia</li>
-          <li>Cetak atau tampilkan kode QR di layar</li>
-        </ul>
-      </div>
-
-      <div class="feat-card visible" data-mod="attendance">
-        <div class="feat-icon">✅</div>
-        <h3>Absensi Mandiri via QR Code</h3>
-        <p class="desc">Jemaat cukup scan kode QR saat tiba — kehadiran langsung tercatat tanpa petugas harus menginput satu per satu. Sistem otomatis mencegah jemaat terhitung hadir dua kali.</p>
-        <ul class="feat-sub-list">
-          <li>Scan kode QR atau ketik nomor HP/ID jemaat</li>
-          <li>Muncul ucapan "Selamat Datang" saat berhasil</li>
-          <li>Tidak bisa absen dobel di ibadah yang sama</li>
-        </ul>
-      </div>
-
-      <!-- PENGUMUMAN -->
-      <div class="feat-card visible" data-mod="announcement">
-        <div class="feat-icon">📢</div>
-        <h3>Pengumuman Gereja</h3>
-        <p class="desc">Buat dan sebarkan pengumuman gereja secara instan ke seluruh jemaat. Pengumuman tampil di dashboard admin dan aplikasi mobile jemaat.</p>
-        <ul class="feat-sub-list">
-          <li>Buat pengumuman dengan judul dan isi lengkap</li>
-          <li>Atur prioritas dan tanggal tayang</li>
-          <li>Pengumuman langsung terlihat di aplikasi jemaat</li>
-        </ul>
-      </div>
-
-      <!-- ACARA -->
-      <div class="feat-card visible" data-mod="event">
-        <div class="feat-icon">📅</div>
-        <h3>Manajemen Acara & Jadwal Ibadah</h3>
-        <p class="desc">Kelola seluruh acara gereja — ibadah mingguan, hari raya, retret, dan acara khusus — dalam satu kalender terpusat.</p>
-        <ul class="feat-sub-list">
-          <li>Buat acara dengan nama, tanggal, jam, dan lokasi</li>
-          <li>Lihat semua jadwal dalam tampilan kalender</li>
-          <li>Acara otomatis muncul di aplikasi jemaat</li>
-        </ul>
-      </div>
-
-      <!-- KEUANGAN - Online Giving -->
-      <div class="feat-card visible" data-mod="finance">
-        <div class="feat-icon">💸</div>
-        <h3>Persembahan Online (QRIS/Transfer)</h3>
-        <p class="desc">Jemaat bisa memberi persembahan secara digital melalui QRIS atau transfer bank. Setiap transaksi langsung tercatat otomatis di sistem keuangan gereja.</p>
-        <ul class="feat-sub-list">
-          <li>Konfigurasi QRIS dan nomor rekening gereja</li>
-          <li>Jemaat scan QR atau transfer dari aplikasi mobile</li>
-          <li>Riwayat transaksi tercatat otomatis tanpa input manual</li>
-        </ul>
-      </div>
-
-      <div class="feat-card visible" data-mod="finance">
-        <div class="feat-icon">🏗️</div>
-        <h3>Proyek Keuangan, Anggaran & Pledge</h3>
-        <p class="desc">Buat proyek keuangan khusus (p pembangunan gedung, misi) dan kelola anggaran gereja. Jemaat bisa berkomitmen (pledge) untuk proyek tertentu.</p>
-        <ul class="feat-sub-list">
-          <li>Buat proyek dengan target nominal dan batas waktu</li>
-          <li>Atur anggaran per departemen atau kegiatan</li>
-          <li>Jemaat buat janji komitmen donasi dari aplikasi</li>
-          <li>Pantau realisasi anggaran vs realita di dashboard</li>
-        </ul>
-      </div>
-
-      <div class="feat-card visible" data-mod="finance">
-        <div class="feat-icon">🔒</div>
-        <h3>Keamanan Data Antar Gereja</h3>
-        <p class="desc">Jika Anda bergabung bersama ribuan gereja lain di platform ini, data keuangan dan jemaat Anda sepenuhnya terlindungi — tidak ada gereja lain yang bisa melihat data Anda.</p>
-        <ul class="feat-sub-list">
-          <li>Data setiap gereja tersimpan terpisah dan aman</li>
-          <li>Tidak ada kebocoran data antar pengguna</li>
-          <li>Privasi keuangan gereja terjaga sepenuhnya</li>
-        </ul>
-      </div>
-
-      <!-- ARSIP -->
-      <div class="feat-card visible" data-mod="document">
-        <div class="feat-icon">📁</div>
-        <h3>Arsip & Dokumen Gereja</h3>
-        <p class="desc">Simpan semua dokumen penting gereja — surat baptis, notulen rapat majelis, laporan tahunan — dalam satu lemari arsip digital yang terorganisir dan tidak akan hilang.</p>
-        <ul class="feat-sub-list">
-          <li>Buat folder dan subfolder sesuai kebutuhan</li>
-          <li>Unggah file PDF, Word, dan gambar hingga 10MB</li>
-          <li>Dokumen tersimpan aman di server cloud</li>
-          <li>File berbahaya atau mencurigakan otomatis ditolak</li>
-        </ul>
-      </div>
-
-      <!-- FASILITAS -->
-      <div class="feat-card visible" data-mod="facility">
-        <div class="feat-icon">🏢</div>
-        <h3>Peminjaman & Reservasi Ruangan</h3>
-        <p class="desc">Atur peminjaman ruangan gereja secara terpusat. Sistem otomatis mendeteksi apakah ruangan sudah dipesan di waktu yang sama — tidak ada lagi dobel-booking yang memalukan.</p>
-        <ul class="feat-sub-list">
-          <li>Pesan ruangan per tanggal dan jam</li>
-          <li>Sistem menolak otomatis jika waktu bentrok</li>
-          <li>Lihat jadwal pemakaian seluruh ruangan sekaligus</li>
-        </ul>
-      </div>
-
-      <div class="feat-card visible" data-mod="facility">
-        <div class="feat-icon">⚡</div>
-        <h3>Pencatatan Tagihan Listrik & Air</h3>
-        <p class="desc">Catat tagihan listrik dan air setiap bulan. Sistem akan memberi peringatan otomatis jika tagihan bulan ini jauh lebih tinggi dari biasanya — agar pengurus bisa segera menindaklanjuti.</p>
-        <ul class="feat-sub-list">
-          <li>Input angka meteran awal dan akhir</li>
-          <li>Tanda peringatan muncul jika tagihan tidak wajar</li>
-          <li>Riwayat tagihan bulanan tersimpan rapi</li>
-        </ul>
-      </div>
-
-      <!-- LAPORAN -->
-      <div class="feat-card visible" data-mod="analytics">
-        <div class="feat-icon">📊</div>
-        <h3>Laporan Dasar Kehadiran & Jemaat</h3>
-        <p class="desc">Lihat rekap kehadiran ibadah dan data jemaat secara cepat. Cocok untuk laporan rutin rapat majelis dan evaluasi mingguan.</p>
-        <ul class="feat-sub-list">
-          <li>Rekap kehadiran per ibadah dan per periode</li>
-          <li>Daftar jemaat berdasarkan kategori dan status</li>
-          <li>Unduh laporan ke Excel sekali klik</li>
-        </ul>
-      </div>
-
-      <div class="feat-card visible" data-mod="analytics">
-        <div class="feat-icon">📈</div>
-        <h3>Analisis & Laporan Keuangan Lanjutan</h3>
-        <p class="desc">Laporan keuangan mendalam dengan grafik tren, perbandingan periode, dan analisis pertumbuhan kontribusi jemaat. Buat keputusan berdasarkan data nyata.</p>
-        <ul class="feat-sub-list">
-          <li>Grafik tren pemasukan dan pengeluaran bulanan</li>
-          <li>Perbandingan realisasi anggaran vs target</li>
-          <li>Laporan siap saji untuk sidang majelis tahunan</li>
-          <li>Filter data per kategori, proyek, atau departemen</li>
-        </ul>
-      </div>
-
-      <!-- APLIKASI JEMAAT -->
-      <div class="feat-card visible" data-mod="mobile">
-        <div class="feat-icon">📱</div>
-        <h3>Aplikasi Mobile untuk Jemaat</h3>
-        <p class="desc">Jemaat bisa mengakses jadwal ibadah, pengumuman, dan informasi gereja langsung dari ponsel mereka. Bahkan tanpa internet pun jadwal tetap bisa dilihat karena sudah tersimpan di HP.</p>
-        <ul class="feat-sub-list">
-          <li>Login dengan email dan kata sandi</li>
-          <li>Jadwal ibadah tetap tampil meski sinyal buruk</li>
-          <li>Tersedia untuk Android dan iOS</li>
-        </ul>
-      </div>
-
-      <div class="feat-card visible" data-mod="mobile">
-        <div class="feat-icon">💸</div>
-        <h3>Persembahan Digital dari HP</h3>
-        <p class="desc">Jemaat yang tidak bisa hadir secara fisik tetap bisa memberikan persembahan melalui aplikasi. Setiap kiriman langsung tercatat di sistem keuangan gereja — tidak perlu konfirmasi manual.</p>
-        <ul class="feat-sub-list">
-          <li>Jemaat isi nominal dan kirim dari aplikasi mobile</li>
-          <li>Petugas keuangan langsung melihat di dashboard</li>
-          <li>Riwayat pemberian tersimpan di profil jemaat</li>
-        </ul>
-      </div>
-
-      <div class="feat-card visible" data-mod="mobile">
-        <div class="feat-icon">🌐</div>
-        <h3>Sambungkan ke Website Gereja</h3>
-        <p class="desc">Informasi dari sistem ini — seperti jadwal ibadah dan khotbah terbaru — bisa ditampilkan otomatis di website resmi gereja Anda tanpa perlu update manual dua tempat.</p>
-        <ul class="feat-sub-list">
-          <li>Buat kunci akses dari dashboard admin</li>
-          <li>Data khotbah, acara, dll. tersaji otomatis di website</li>
-          <li>Akses tanpa kunci yang valid otomatis ditolak</li>
-        </ul>
-      </div>
-
-      <!-- KOMUNIKASI -->
-      <div class="feat-card visible" data-mod="messaging">
-        <div class="feat-icon">💬</div>
-        <h3>Kirim Pesan Masal (WhatsApp/Email)</h3>
-        <p class="desc">Kirim pengumuman, undangan acara, atau renungan harian ke seluruh jemaat sekaligus melalui WhatsApp atau email. Hemat waktu dan pastikan pesan tersampaikan.</p>
-        <ul class="feat-sub-list">
-          <li>Pilih penerima berdasarkan kategori jemaat</li>
-          <li>Kirim via WhatsApp terintegrasi atau email</li>
-          <li>Riwayat pengiriman tercatat untuk audit</li>
-          <li>Template pesan siap pakai</li>
-        </ul>
-      </div>
-
-      <!-- DIGITAL -->
-      <div class="feat-card visible" data-mod="digital">
-        <div class="feat-icon">📻</div>
-        <h3>Khotbah Digital & Buletin Online</h3>
-        <p class="desc">Unggah rekaman khotbah, materi renungan, dan buletin gereja secara digital. Jemaat bisa mengakses kapan saja dari aplikasi mobile atau website.</p>
-        <ul class="feat-sub-list">
-          <li>Unggah audio/video khotbah dengan deskripsi</li>
-          <li>Buat buletin online dengan editor bawaan</li>
-          <li>Jemaat akses langsung dari aplikasi mobile</li>
-          <li>Arsip khotbah tersimpan rapi dan mudah dicari</li>
-        </ul>
-      </div>
-
-      <div class="feat-card visible" data-mod="digital">
-        <div class="feat-icon">📰</div>
-        <h3>Newsletter & Buletin Email Terjadwal</h3>
-        <p class="desc">Kirim newsletter mingguan atau buletin email secara otomatis ke jemaat. Jadwalkan konten dan sistem akan mengirimkannya pada waktu yang ditentukan.</p>
-        <ul class="feat-sub-list">
-          <li>Buat newsletter dengan editor bawaan</li>
-          <li>Atur jadwal pengiriman otomatis</li>
-          <li>Daftar penerima terkelola berdasarkan preferensi</li>
-          <li>Laporan statistik pengiriman dan pembacaan</li>
-        </ul>
-      </div>
-      <div class="feat-card visible" data-mod="pastoral">
-        <div class="feat-icon">🤝</div>
-        <h3>Catatan Kunjungan Pastoral</h3>
-        <p class="desc">Dokumentasikan setiap kunjungan ke rumah atau rumah sakit jemaat secara terstruktur. Pendeta dan staf bisa melihat riwayat pelayanan seseorang sebelum melakukan kunjungan berikutnya.</p>
-        <ul class="feat-sub-list">
-          <li>Catat jenis kunjungan: ke rumah atau rumah sakit</li>
-          <li>Simpan tujuan kunjungan dan catatan pelayanan</li>
-          <li>Riwayat kunjungan terhubung ke profil jemaat</li>
-          <li>Tandai selesai setelah kunjungan dilaksanakan</li>
-        </ul>
-      </div>
-
-      <div class="feat-card visible" data-mod="pastoral">
-        <div class="feat-icon">🔐</div>
-        <h3>Konseling Rahasia (Confidential)</h3>
-        <p class="desc">Catatan sesi konseling bersifat rahasia dan hanya bisa dibaca oleh Pendeta atau konselor yang berwenang. Staf administrasi tidak bisa mengakses isi percakapan konseling.</p>
-        <ul class="feat-sub-list">
-          <li>Aktifkan mode "Rahasia" untuk sesi konseling tertentu</li>
-          <li>Hanya Pendeta atau konselor yang dapat membuka catatan</li>
-          <li>Kerahasiaan jemaat terjaga sepenuhnya</li>
-        </ul>
-      </div>
-
-      <!-- KELOMPOK SEL -->
-      <div class="feat-card visible" data-mod="smallgroup">
-        <div class="feat-icon">🏠</div>
-        <h3>Manajemen Kelompok Sel</h3>
-        <p class="desc">Kelola seluruh kelompok sel dari satu tempat — siapa anggotanya, kapan dan di mana pertemuan, dan siapa pemimpinnya. Jumlah anggota terupdate otomatis saat ada perubahan.</p>
-        <ul class="feat-sub-list">
-          <li>Buat kelompok sel dengan nama, jadwal, dan lokasi</li>
-          <li>Tetapkan ketua sel dan anggota</li>
-          <li>Jumlah anggota tercatat otomatis</li>
-        </ul>
-      </div>
-
-      <div class="feat-card visible" data-mod="smallgroup">
-        <div class="feat-icon">📝</div>
-        <h3>Absensi Pertemuan Kelompok Sel</h3>
-        <p class="desc">Catat kehadiran setiap pertemuan sel dengan mudah. Data ini membantu Pendeta mengetahui jemaat mana yang mulai jarang aktif sehingga bisa mendapat perhatian lebih.</p>
-        <ul class="feat-sub-list">
-          <li>Buat catatan pertemuan baru beserta topiknya</li>
-          <li>Tandai setiap anggota: hadir, tidak hadir, atau izin</li>
-          <li>Data keaktifan tersedia untuk evaluasi rutin</li>
-        </ul>
-      </div>
-
-      <!-- PELAYANAN -->
-      <div class="feat-card visible" data-mod="ministry">
-        <div class="feat-icon">🙋</div>
-        <h3>Manajemen Pelayanan & Relawan</h3>
-        <p class="desc">Kelola jadwal pelayanan, pendaftaran relawan, dan cocokkan bakat jemaat dengan kebutuhan pelayanan gereja secara otomatis.</p>
-        <ul class="feat-sub-list">
-          <li>Buka pendaftaran relawan untuk acara atau pelayanan tertentu</li>
-          <li>Jemaat daftar langsung dari aplikasi mobile</li>
-          <li>Saring pendaftar berdasarkan bakat dan karunia</li>
-          <li>Atur jadwal pelayanan bergilir tanpa bentrok</li>
-        </ul>
-      </div>
-
-      <!-- PENGATURAN SAAS -->
-      <div class="feat-card visible" data-mod="saas">
-        <div class="feat-icon">⚙️</div>
-        <h3>Kontrol Paket & Fitur Aktif</h3>
-        <p class="desc">Setiap gereja hanya menggunakan fitur sesuai paket yang dipilih. Jika gereja ingin fitur tambahan, tampilannya jelas memandu untuk meningkatkan paket — tidak ada kejutan tagihan.</p>
-        <ul class="feat-sub-list">
-          <li>Fitur tersedia sesuai paket langganan gereja</li>
-          <li>Pesan jelas muncul jika fitur belum tersedia di paket saat ini</li>
-          <li>Upgrade paket langsung aktif tanpa setup ulang</li>
-          <li>Kelola seluruh akun gereja dari satu panel pusat</li>
-        </ul>
-      </div>
-
-      <div class="feat-card visible" data-mod="saas">
-        <div class="feat-icon">🔗</div>
-        <h3>Akses API untuk Integrasi Eksternal</h3>
-        <p class="desc">Hubungkan sistem Eklesia dengan aplikasi lain yang sudah gereja Anda gunakan. API dokumentasi lengkap tersedia untuk pengembang.</p>
-        <ul class="feat-sub-list">
-          <li>Dokumentasi API lengkap dan terstruktur</li>
-          <li>Integrasi dengan website, CRM, atau sistem lain</li>
-          <li>Kunci akses API yang aman dan dapat diatur</li>
-          <li>Rate limiting dan logging untuk keamanan</li>
-        </ul>
-      </div>
-
-      <div class="feat-card visible" data-mod="saas">
-        <div class="feat-icon">🌐</div>
-        <h3>Domain Kustom Website Gereja</h3>
-        <p class="desc">Gunakan domain nama gereja Anda sendiri untuk website yang terhubung langsung dengan sistem Eklesia. Tampilkan jadwal, khotbah, dan pengumuman secara otomatis.</p>
-        <ul class="feat-sub-list">
-          <li>Hubungkan domain milik gereja (contoh: gerejaanda.id)</li>
-          <li>Konten otomatis tersaji dari dashboard Eklesia</li>
-          <li>SSL gratis terpasang otomatis</li>
-          <li>Tidak perlu coding atau maintenance server</li>
-        </ul>
-      </div>
-
-      <div class="feat-card visible" data-mod="saas">
-        <div class="feat-icon">🔑</div>
-        <h3>Autentikasi SSO (Single Sign-On)</h3>
-        <p class="desc">Memudahkan staf dan pengurus gereja masuk ke sistem dengan satu akun terpusat. Cocok untuk gereja sinode dengan banyak cabang.</p>
-        <ul class="feat-sub-list">
-          <li>Login terpusat untuk seluruh pengurus gereja</li>
-          <li>Dukungan SAML, OAuth, atau OpenID Connect</li>
-          <li>Kelola akses pengguna dari satu panel</li>
-          <li>Keamanan enterprise-grade</li>
-        </ul>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<section class="section" id="harga" style="background: var(--deep); border-top: 1px solid var(--border);">
-  <div class="pricing-wrap reveal">
-    <div class="pricing-header">
-      <p class="section-label">Harga Transparan</p>
-      <h2 class="section-title">Pilih Paket yang Sesuai<br>Ukuran Gereja Anda</h2>
-    </div>
-    <div class="pricing-grid">
-      <div class="price-card">
-        <div class="plan-name">Free</div>
-        <div class="plan-price">Gratis <span>/ bulan</span></div>
-        <p class="plan-desc">Cocok untuk rintisan jemaat baru atau gereja berukuran kecil.</p>
-        <ul class="plan-features" style="margin-bottom:0.5rem">
-          <li style="font-size:0.78rem;color:rgba(255,255,255,0.3);padding-left:0"><strong style="color:var(--muted)">Kapasitas:</strong> 50 Anggota · 2 Admin · 1 GB</li>
-        </ul>
-        <ul class="plan-features">
-          <li>📋 Direktori & Database Jemaat</li>
-          <li>🕊️ Pencatatan Kehadiran Ibadah</li>
-          <li>📊 Laporan Dasar Kehadiran & Jemaat</li>
-          <li>📢 Pengumuman Gereja</li>
-          <li class="off">📅 Manajemen Acara & Jadwal</li>
-          <li class="off">👥 Kelompok Sel / Komunitas</li>
-          <li class="off">🩺 Kunjungan & Konseling Pastoral</li>
-          <li class="off">📚 Perpustakaan Dokumen Digital</li>
-          <li class="off">💸 Keuangan & Persembahan Online</li>
-          <li class="off">📱 Aplikasi Mobile Jemaat</li>
-          <li class="off">💬 Kirim Pesan Masal</li>
-        </ul>
-        <a href="#pilot" class="plan-btn plan-btn-outline">Daftar Gratis →</a>
-      </div>
-      <div class="price-card">
-        <div class="plan-name">Basic</div>
-        <div class="plan-price">Rp 149K <span>/ bulan</span></div>
-        <p class="plan-desc">Cocok untuk gereja lokal berukuran kecil-menengah.</p>
-        <ul class="plan-features" style="margin-bottom:0.5rem">
-          <li style="font-size:0.78rem;color:rgba(255,255,255,0.3);padding-left:0"><strong style="color:var(--muted)">Kapasitas:</strong> 200 Anggota · 5 Admin · 5 GB</li>
-        </ul>
-        <ul class="plan-features">
-          <li>Semua fitur Free Plan</li>
-          <li>📅 Manajemen Acara & Jadwal Ibadah</li>
-          <li>👥 Kelompok Sel / Komunitas</li>
-          <li>🩺 Kunjungan & Konseling Pastoral</li>
-          <li>📚 Perpustakaan Dokumen Digital</li>
-          <li>✉️ Dukungan Teknis via Email</li>
-          <li class="off">💸 Keuangan & Persembahan Online</li>
-          <li class="off">🏗️ Proyek Keuangan & Anggaran</li>
-          <li class="off">📊 Analisis & Laporan Keuangan Lanjutan</li>
-          <li class="off">🤝 Manajemen Pelayanan & Relawan</li>
-          <li class="off">💬 Kirim Pesan Masal (WA/Email)</li>
-          <li class="off">🏢 Peminjaman Ruangan & Fasilitas</li>
-          <li class="off">📻 Khotbah Digital & Buletin Online</li>
-          <li class="off">📱 Aplikasi Mobile Jemaat</li>
-        </ul>
-        <a href="#pilot" class="plan-btn plan-btn-outline">Mulai Gratis →</a>
-      </div>
-      <div class="price-card featured">
-        <div class="plan-name">Pro</div>
-        <div class="plan-price">Rp 299K <span>/ bulan</span></div>
-        <p class="plan-desc">Paket paling populer untuk gereja yang ingin mengoptimalkan pelayanan digital dan keuangan.</p>
-        <ul class="plan-features" style="margin-bottom:0.5rem">
-          <li style="font-size:0.78rem;color:rgba(255,255,255,0.3);padding-left:0"><strong style="color:var(--muted)">Kapasitas:</strong> 1.000 Anggota · 20 Admin · 20 GB</li>
-        </ul>
-        <ul class="plan-features">
-          <li>Semua fitur Basic Plan</li>
-          <li>💸 Keuangan & Persembahan Online (QRIS/Transfer)</li>
-          <li>🏗️ Proyek Keuangan, Anggaran & Pledge</li>
-          <li>📊 Analisis & Laporan Keuangan Lanjutan</li>
-          <li>🤝 Manajemen Pelayanan & Relawan</li>
-          <li>💬 Kirim Pesan Masal (WhatsApp/Email)</li>
-          <li>🏢 Peminjaman Ruangan & Fasilitas Gereja</li>
-          <li>📻 Khotbah Digital & Buletin Online</li>
-          <li>☎️ Dukungan Prioritas 24/7</li>
-          <li class="off">📱 Aplikasi Mobile Jemaat</li>
-          <li class="off">📰 Newsletter & Buletin Email Terjadwal</li>
-          <li class="off">🔗 Akses API untuk Integrasi</li>
-          <li class="off">🌐 Domain Kustom Website</li>
-          <li class="off">🔑 Autentikasi SSO</li>
-        </ul>
-        <a href="#pilot" class="plan-btn plan-btn-solid">Mulai Gratis →</a>
-      </div>
-      <div class="price-card">
-        <div class="plan-name">Enterprise</div>
-        <div class="plan-price">Rp 599K <span>/ bulan</span></div>
-        <p class="plan-desc">Solusi lengkap untuk gereja berskala besar, multi-cabang/sinode.</p>
-        <ul class="plan-features" style="margin-bottom:0.5rem">
-          <li style="font-size:0.78rem;color:rgba(255,255,255,0.3);padding-left:0"><strong style="color:var(--muted)">Kapasitas:</strong> Unlimited Anggota · Unlimited Admin · Unlimited Storage</li>
-        </ul>
-        <ul class="plan-features">
-          <li>Semua fitur Pro Plan</li>
-          <li>📱 Aplikasi Mobile Eklesia untuk Jemaat</li>
-          <li>📰 Newsletter & Buletin Email Terjadwal</li>
-          <li>🔗 Akses API untuk Integrasi Eksternal</li>
-          <li>🌐 Domain Kustom Website Gereja</li>
-          <li>🔑 Autentikasi SSO (Single Sign-On)</li>
-          <li>👤 Dedicated Account Manager</li>
-        </ul>
-        <a href="#pilot" class="plan-btn plan-btn-outline">Mulai Gratis →</a>
-      </div>
-    </div>
-    <p style="text-align:center; margin-top:2rem; font-size:0.82rem; color:rgba(255,255,255,0.3)">Semua paket termasuk setup gratis · Gereja pilot mendapat harga spesial selamanya · Tidak perlu kartu kredit</p>
-  </div>
-</section>
-
-<!-- PILOT -->
-<section class="section pilot" id="pilot">
-  <div class="pilot-inner reveal">
-    <p class="section-label">Program Eksklusif</p>
-    <h2>Jadilah <em>Gereja Pertama</em><br>yang Bergabung</h2>
-    <p>Kami membuka program pilot untuk <strong style="color:#fff">10 gereja terpilih</strong>. Akses penuh semua fitur Enterprise GRATIS selama 3 bulan, plus pendampingan langsung dari tim kami dari awal hingga siap pakai.</p>
-    <div class="pilot-benefits">
-      <span class="benefit-tag">✓ Semua fitur Enterprise gratis</span>
-      <span class="benefit-tag">✓ Setup & pelatihan gratis</span>
-      <span class="benefit-tag">✓ Harga spesial selamanya</span>
-      <span class="benefit-tag">✓ Masukan Anda bentuk produk ini</span>
-      <span class="benefit-tag">✓ Hubungi kami langsung via WhatsApp</span>
-    </div>
-    <div class="form-box">
-      <form id="pilotForm">
-        <div class="form-row">
-          <div class="form-group">
-            <label>Nama Gereja</label>
-            <input type="text" name="gereja" placeholder="GKI Kebayoran Baru" required>
-          </div>
-          <div class="form-group">
-            <label>Kota</label>
-            <input type="text" name="kota" placeholder="Jakarta" required>
-          </div>
-        </div>
-        <div class="form-row" style="margin-top:1rem">
-          <div class="form-group">
-            <label>Nama Pengurus / PIC</label>
-            <input type="text" name="pic" placeholder="Pdt. Yohanes" required>
-          </div>
-          <div class="form-group">
-            <label>No. WhatsApp</label>
-            <input type="tel" name="wa" placeholder="0812-xxxx-xxxx" required>
-          </div>
-        </div>
-        <div class="form-row" style="margin-top:1rem">
-          <div class="form-group">
-            <label>Alamat Email</label>
-            <input type="email" name="email" placeholder="gereja@example.com" required>
-          </div>
-        </div>
-        <div class="form-row" style="margin-top:1rem">
-          <div class="form-group">
-            <label>Jumlah Jemaat (estimasi)</label>
-            <select name="jumlah_jemaat" required>
-              <option value="">Pilih kisaran...</option>
-              <option>Di bawah 100 orang</option>
-              <option>100 – 300 orang</option>
-              <option>300 – 500 orang</option>
-              <option>Lebih dari 500 orang</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Denominasi</label>
-            <input type="text" name="denominasi" placeholder="Baptis, Pentakosta, dll." required>
-          </div>
-        </div>
-        <button type="submit" class="form-submit">Daftar Sekarang — Gratis 3 Bulan →</button>
-      </form>
-      <p class="form-note">Tim kami akan menghubungi dalam 1×24 jam · Hanya 10 slot tersedia</p>
-    </div>
-  </div>
-</section>
-
-
-
-<footer>
-  <p>Dibuat dengan ❤️ untuk melayani <span>gereja-gereja Indonesia</span></p>
-  <p style="margin-top:0.5rem">© 2025 · Program Pilot Masih Terbuka — 10 Slot Tersedia</p>
-</footer>
-
-<script>
-  function filterMod(mod, btn) {
-    document.querySelectorAll('.mod-tab').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.feat-card').forEach(card => {
-      if (mod === 'all' || card.dataset.mod === mod) {
-        card.classList.add('visible');
-      } else {
-        card.classList.remove('visible');
-      }
-    });
-  }
-  function switchTab(id, btn) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    document.getElementById('tab-' + id).classList.add('active');
-    btn.classList.add('active');
-  }
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.08 });
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-  // FORM — proxy via Vercel Serverless Function
-  document.getElementById('pilotForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const btn = this.querySelector('button[type="submit"]');
-    const originalText = btn.textContent;
-    btn.textContent = 'Mengirim...';
-    btn.disabled = true;
-
-    const data = {};
-    new FormData(this).forEach((v, k) => data[k] = v);
-
-    try {
-      const res = await fetch('/api/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-      if (!res.ok) throw new Error('Gagal');
-      btn.textContent = '✓ Terkirim!';
-      this.reset();
-    } catch {
-      btn.textContent = '✗ Gagal, coba lagi';
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eklesia — Sistem Manajemen Gereja Modern</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --gold: #C9972B;
+      --gold-light: #F0C96A;
+      --dark: #0E0E0E;
+      --deep: #141008;
+      --muted: rgba(255, 255, 255, 0.45);
+      --border: rgba(201, 151, 43, 0.15);
     }
 
-    setTimeout(() => {
-      btn.textContent = originalText;
-      btn.disabled = false;
-    }, 3000);
-  });
-</script>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--dark);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 5%;
+      background: rgba(14, 14, 14, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .logo span {
+      color: #fff;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav a {
+      color: rgba(255, 255, 255, 0.65);
+      text-decoration: none;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--gold);
+    }
+
+    .nav-cta {
+      background: var(--gold) !important;
+      color: var(--dark) !important;
+      padding: 0.5rem 1.3rem;
+      border-radius: 2px;
+      font-weight: 500 !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--gold-light) !important;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 8rem 5% 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201, 151, 43, 0.13) 0%, transparent 65%),
+        radial-gradient(ellipse 35% 35% at 15% 85%, rgba(201, 151, 43, 0.07) 0%, transparent 60%);
+    }
+
+    .hero-badge {
+      display: inline-block;
+      border: 1px solid rgba(201, 151, 43, 0.5);
+      color: var(--gold);
+      font-size: 0.76rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.4rem 1rem;
+      border-radius: 2px;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 7.5vw, 6rem);
+      font-weight: 900;
+      line-height: 1.0;
+      max-width: 880px;
+      animation: fadeUp 0.8s 0.15s ease both;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .hero p {
+      max-width: 520px;
+      margin: 1.8rem auto;
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--muted);
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 2rem 0;
+      animation: fadeUp 0.8s 0.4s ease both;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      color: var(--gold);
+      font-weight: 700;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeUp 0.8s 0.5s ease both;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--dark);
+      padding: 0.9rem 2.2rem;
+      border-radius: 2px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 0.9rem 2.2rem;
+      border-radius: 2px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .hero-note {
+      margin-top: 1.2rem;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.3);
+      animation: fadeUp 0.8s 0.6s ease both;
+    }
+
+    .section {
+      padding: 6rem 5%;
+    }
+
+    .section-label {
+      font-size: 0.74rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.8rem;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.9rem, 4vw, 3.2rem);
+      line-height: 1.15;
+    }
+
+    .pain {
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pain-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .pain-inner p.lead {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.8;
+      max-width: 580px;
+      margin: 1.2rem auto 3rem;
+    }
+
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .pain-item {
+      background: var(--deep);
+      padding: 2rem 1.5rem;
+      text-align: left;
+      transition: background 0.2s;
+    }
+
+    .pain-item:hover {
+      background: rgba(201, 151, 43, 0.04);
+    }
+
+    .pain-icon {
+      font-size: 1.6rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .pain-item h4 {
+      font-size: 0.92rem;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+    }
+
+    .pain-item p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .features-wrap {
+      max-width: 1140px;
+      margin: 0 auto;
+    }
+
+    .features-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .features-header p.sub {
+      color: var(--muted);
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+
+    .mod-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 3rem;
+    }
+
+    .mod-tab {
+      background: none;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.5);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      padding: 0.5rem 1.1rem;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.03em;
+    }
+
+    .mod-tab:hover {
+      border-color: rgba(201, 151, 43, 0.4);
+      color: var(--gold-light);
+    }
+
+    .mod-tab.active {
+      background: var(--gold);
+      color: var(--dark);
+      border-color: var(--gold);
+      font-weight: 500;
+    }
+
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feat-card {
+      border: 1px solid rgba(201, 151, 43, 0.1);
+      padding: 2rem;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.02);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, background 0.3s;
+      display: none;
+    }
+
+    .feat-card.visible {
+      display: block;
+      animation: cardIn 0.4s ease both;
+    }
+
+    .feat-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 0;
+      background: var(--gold);
+      transition: height 0.3s;
+    }
+
+    .feat-card:hover {
+      border-color: rgba(201, 151, 43, 0.3);
+      background: rgba(201, 151, 43, 0.04);
+    }
+
+    .feat-card:hover::after {
+      height: 100%;
+    }
+
+    .feat-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .feat-card h3 {
+      font-size: 1.05rem;
+      font-weight: 500;
+      margin-bottom: 0.7rem;
+      line-height: 1.3;
+    }
+
+    .feat-card .desc {
+      font-size: 0.88rem;
+      color: rgba(255, 255, 255, 0.65);
+      line-height: 1.75;
+      margin-bottom: 1.1rem;
+    }
+
+    .feat-sub-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .feat-sub-list li {
+      font-size: 0.81rem;
+      color: rgba(255, 255, 255, 0.42);
+      padding-left: 1rem;
+      position: relative;
+      list-style: none;
+      line-height: 1.5;
+    }
+
+    .feat-sub-list li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--gold);
+      font-size: 0.7rem;
+      top: 0.1em;
+    }
+
+    .pilot {
+      background: linear-gradient(135deg, rgba(201, 151, 43, 0.13) 0%, rgba(201, 151, 43, 0.02) 100%);
+      border-top: 1px solid rgba(201, 151, 43, 0.3);
+      border-bottom: 1px solid rgba(201, 151, 43, 0.3);
+    }
+
+    .pilot-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .pilot-inner h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      margin-bottom: 1rem;
+    }
+
+    .pilot-inner h2 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .pilot-inner>p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .pilot-benefits {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      justify-content: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .benefit-tag {
+      background: rgba(201, 151, 43, 0.1);
+      border: 1px solid rgba(201, 151, 43, 0.3);
+      color: var(--gold-light);
+      padding: 0.45rem 1rem;
+      border-radius: 2px;
+      font-size: 0.8rem;
+    }
+
+    .form-box {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(201, 151, 43, 0.2);
+      padding: 2rem;
+      border-radius: 4px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .form-group {
+      flex: 1;
+      min-width: 195px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.45);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      padding: 0.75rem 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      border-radius: 2px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--gold);
+    }
+
+    .form-group select option {
+      background: #1a1a1a;
+    }
+
+    .form-submit {
+      margin-top: 1.2rem;
+      width: 100%;
+      background: var(--gold);
+      color: var(--dark);
+      padding: 1rem;
+      border: none;
+      border-radius: 2px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .form-submit:hover {
+      background: var(--gold-light);
+    }
+
+    .form-note {
+      font-size: 0.76rem;
+      color: rgba(255, 255, 255, 0.28);
+      margin-top: 0.8rem;
+    }
+
+    .pricing-wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .pricing-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .price-card {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 2.2rem;
+      border-radius: 4px;
+      position: relative;
+      transition: border-color 0.3s;
+    }
+
+    .price-card:hover {
+      border-color: rgba(201, 151, 43, 0.25);
+    }
+
+    .price-card.featured {
+      border-color: var(--gold);
+      background: rgba(201, 151, 43, 0.05);
+    }
+
+    .price-card.featured::before {
+      content: 'Paling Populer';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--gold);
+      color: var(--dark);
+      font-size: 0.68rem;
+      font-weight: 500;
+      padding: 0.25rem 0.8rem;
+      border-radius: 2px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .plan-name {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.8rem;
+    }
+
+    .plan-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+
+    .plan-price span {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--muted);
+    }
+
+    .plan-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin: 0.8rem 0 1.5rem;
+      line-height: 1.6;
+    }
+
+    .plan-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 2rem;
+    }
+
+    .plan-features li {
+      font-size: 0.83rem;
+      color: rgba(255, 255, 255, 0.65);
+      padding-left: 1.2rem;
+      position: relative;
+    }
+
+    .plan-features li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--gold);
+      font-size: 0.75rem;
+    }
+
+    .plan-features li.off {
+      color: rgba(255, 255, 255, 0.25);
+    }
+
+    .plan-features li.off::before {
+      content: '—';
+      color: rgba(255, 255, 255, 0.2);
+    }
+
+    .plan-btn {
+      display: block;
+      text-align: center;
+      padding: 0.8rem;
+      border-radius: 2px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .plan-btn-outline {
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .plan-btn-outline:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .plan-btn-solid {
+      background: var(--gold);
+      color: var(--dark);
+      font-weight: 500;
+    }
+
+    .plan-btn-solid:hover {
+      background: var(--gold-light);
+    }
+
+    .script-section {
+      background: #111;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .script-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .script-inner>p.sub {
+      color: var(--muted);
+      margin-bottom: 3rem;
+      font-size: 0.95rem;
+    }
+
+    .script-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.4);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      padding: 0.8rem 1.5rem;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .script-block {
+      background: rgba(255, 255, 255, 0.02);
+      border-left: 3px solid var(--gold);
+      padding: 1.5rem 2rem;
+      margin-bottom: 1.5rem;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .script-block .speaker {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.6rem;
+    }
+
+    .script-block p {
+      font-size: 0.93rem;
+      line-height: 1.9;
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    .script-block p strong {
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .script-tip {
+      background: rgba(201, 151, 43, 0.07);
+      border: 1px solid rgba(201, 151, 43, 0.2);
+      padding: 1rem 1.5rem;
+      border-radius: 4px;
+      font-size: 0.83rem;
+      color: rgba(255, 255, 255, 0.55);
+      margin-bottom: 1.5rem;
+    }
+
+    .script-tip strong {
+      color: var(--gold-light);
+    }
+
+    .brand-section {
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .brand-inner {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .brand-inner>p.sub {
+      color: var(--muted);
+      margin-bottom: 3rem;
+      font-size: 0.95rem;
+    }
+
+    .brand-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 1rem;
+    }
+
+    .brand-card {
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      padding: 1.5rem;
+      border-radius: 4px;
+      transition: border-color 0.2s;
+    }
+
+    .brand-card:hover {
+      border-color: rgba(201, 151, 43, 0.35);
+    }
+
+    .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+
+    .brand-tagline {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.7rem;
+      font-style: italic;
+    }
+
+    .brand-reason {
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.32);
+      line-height: 1.6;
+    }
+
+    .brand-badge {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--dark);
+      font-size: 0.62rem;
+      font-weight: 500;
+      padding: 0.2rem 0.5rem;
+      border-radius: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    footer {
+      padding: 2.5rem 5%;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.22);
+      font-size: 0.8rem;
+    }
+
+    footer span {
+      color: var(--gold);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes cardIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: all 0.65s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media(max-width:640px) {
+      nav ul {
+        display: none;
+      }
+
+      .hero-stats {
+        gap: 1.5rem;
+      }
+
+      .section {
+        padding: 3rem 5%;
+      }
+
+      .features-header {
+        margin-bottom: 2rem;
+      }
+
+      .mod-tabs {
+        gap: 0.35rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .mod-tab {
+        font-size: 0.72rem;
+        padding: 0.35rem 0.8rem;
+      }
+
+      .pricing-header {
+        margin-bottom: 2rem;
+      }
+
+      .pain-inner p.lead {
+        margin-bottom: 1.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <div class="logo">Ekle<span>sia</span></div>
+    <ul>
+      <li><a href="#fitur">Fitur</a></li>
+      <li><a href="#harga">Harga</a></li>
+      <li><a href="#pilot">Program Pilot</a></li>
+    </ul>
+    <a href="#pilot" class="nav-cta">Daftar Gratis</a>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-badge">✦ Platform Gereja Terlengkap di Indonesia</div>
+    <h1>Satu Platform untuk<br><em>Semua Kebutuhan</em><br>Gereja Modern</h1>
+    <p>Dari administrasi jemaat hingga keuangan, pelayanan pastoral, kelompok sel, dan aplikasi untuk jemaat — semua
+      tersedia dalam satu tempat.</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">14+</span><span class="stat-label">Modul Fitur</span></div>
+      <div class="stat"><span class="stat-num">50+</span><span class="stat-label">Sub-Fitur</span></div>
+      <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Data Aman & Terpisah</span></div>
+    </div>
+    <div class="hero-cta">
+      <a href="#pilot" class="btn-primary">Daftar Program Pilot Gratis →</a>
+      <a href="#fitur" class="btn-secondary">Jelajahi Fitur</a>
+    </div>
+    <p class="hero-note">Gratis 3 bulan · Tanpa biaya apapun · Dibantu tim kami dari awal</p>
+  </section>
+
+  <section class="section pain">
+    <div class="pain-inner reveal">
+      <p class="section-label">Masalah yang kami selesaikan</p>
+      <h2 class="section-title">Masih kewalahan mengurus<br>administrasi gereja?</h2>
+      <p class="lead">Banyak pengurus gereja menghabiskan waktu berjam-jam hanya untuk mencatat, merekap, dan mencari
+        data — padahal waktu itu seharusnya untuk melayani jemaat.</p>
+      <div class="pain-grid">
+        <div class="pain-item">
+          <div class="pain-icon">📋</div>
+          <h4>Data jemaat berserakan</h4>
+          <p>Biodata dicatat di buku, spreadsheet, dan kertas berbeda. Sulit dicari saat dibutuhkan.</p>
+        </div>
+        <div class="pain-item">
+          <div class="pain-icon">💰</div>
+          <h4>Rekap keuangan menyita waktu</h4>
+          <p>Menghitung persembahan dan membuat laporan keuangan masih dikerjakan manual setiap minggu.</p>
+        </div>
+        <div class="pain-item">
+          <div class="pain-icon">📅</div>
+          <h4>Jadwal pelayanan sering bentrok</h4>
+          <p>Pengumuman jadwal lewat WhatsApp sering terlewat dan menyebabkan miskomunikasi.</p>
+        </div>
+        <div class="pain-item">
+          <div class="pain-icon">🏢</div>
+          <h4>Ruangan dobel-booking</h4>
+          <p>Tidak ada catatan terpusat, sehingga dua kelompok bisa memesan ruangan di waktu yang sama.</p>
+        </div>
+        <div class="pain-item">
+          <div class="pain-icon">🤝</div>
+          <h4>Catatan pastoral mudah hilang</h4>
+          <p>Riwayat kunjungan dan percakapan konseling tersimpan di catatan pribadi yang rawan hilang.</p>
+        </div>
+        <div class="pain-item">
+          <div class="pain-icon">📱</div>
+          <h4>Jemaat sulit mendapat informasi</h4>
+          <p>Tidak ada kanal resmi yang mudah diakses jemaat selain grup WhatsApp yang penuh notifikasi.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="fitur">
+    <div class="features-wrap reveal">
+      <div class="features-header">
+        <p class="section-label">Solusi Lengkap</p>
+        <h2 class="section-title">14+ Modul, 50+ Fitur —<br>Dirancang untuk Gereja Indonesia</h2>
+        <p class="sub">Klik kategori di bawah untuk melihat fitur secara detail</p>
+      </div>
+
+      <div class="mod-tabs">
+        <button class="mod-tab active" onclick="filterMod('all', this)">Semua</button>
+        <button class="mod-tab" onclick="filterMod('membership', this)">👥 Data Jemaat</button>
+        <button class="mod-tab" onclick="filterMod('attendance', this)">✅ Kehadiran</button>
+        <button class="mod-tab" onclick="filterMod('event', this)">📅 Acara</button>
+        <button class="mod-tab" onclick="filterMod('announcement', this)">📢 Pengumuman</button>
+        <button class="mod-tab" onclick="filterMod('finance', this)">💰 Keuangan</button>
+        <button class="mod-tab" onclick="filterMod('document', this)">📄 Arsip</button>
+        <button class="mod-tab" onclick="filterMod('facility', this)">🏢 Fasilitas</button>
+        <button class="mod-tab" onclick="filterMod('analytics', this)">📊 Laporan</button>
+        <button class="mod-tab" onclick="filterMod('mobile', this)">📱 Aplikasi Jemaat</button>
+        <button class="mod-tab" onclick="filterMod('messaging', this)">💬 Komunikasi</button>
+        <button class="mod-tab" onclick="filterMod('digital', this)">📻 Digital</button>
+        <button class="mod-tab" onclick="filterMod('pastoral', this)">🤝 Pastoral</button>
+        <button class="mod-tab" onclick="filterMod('smallgroup', this)">🏠 Kelompok Sel</button>
+        <button class="mod-tab" onclick="filterMod('ministry', this)">🙋 Pelayanan</button>
+        <button class="mod-tab" onclick="filterMod('saas', this)">⚙️ Pengaturan</button>
+      </div>
+
+      <div class="feat-grid">
+
+        <!-- DATA JEMAAT -->
+        <div class="feat-card visible" data-mod="membership">
+          <div class="feat-icon">👤</div>
+          <h3>Buku Data Jemaat Digital</h3>
+          <p class="desc">Simpan biodata lengkap seluruh jemaat dalam satu tempat yang rapi dan mudah dicari. Tidak
+            perlu lagi buka-buka buku catatan atau file Excel yang berserakan.</p>
+          <ul class="feat-sub-list">
+            <li>Simpan nama, kontak, kategori, dan status keanggotaan</li>
+            <li>Riwayat baptis dan sidi tercatat otomatis</li>
+            <li>Cari data jemaat dalam hitungan detik</li>
+          </ul>
+        </div>
+
+        <div class="feat-card visible" data-mod="membership">
+          <div class="feat-icon">🏠</div>
+          <h3>Kartu Keluarga Jemaat</h3>
+          <p class="desc">Kelompokkan anggota jemaat dalam satu unit keluarga. Jika alamat kepala keluarga diperbarui,
+            semua anggota ikut terupdate secara otomatis — tidak perlu mengedit satu per satu.</p>
+          <ul class="feat-sub-list">
+            <li>Gabungkan beberapa jemaat dalam satu keluarga</li>
+            <li>Tetapkan kepala keluarga</li>
+            <li>Perubahan alamat menyebar otomatis ke seluruh anggota</li>
+          </ul>
+        </div>
+
+        <!-- KEHADIRAN -->
+        <div class="feat-card visible" data-mod="attendance">
+          <div class="feat-icon">📅</div>
+          <h3>Jadwal & Pengaturan Ibadah</h3>
+          <p class="desc">Buat jadwal ibadah mingguan, hari raya, atau ibadah khusus dengan mudah. Setelah jadwal
+            dibuat, kode QR untuk absensi langsung tersedia dan siap dicetak.</p>
+          <ul class="feat-sub-list">
+            <li>Atur nama, tanggal, dan jam ibadah</li>
+            <li>Kode QR absensi otomatis tersedia</li>
+            <li>Cetak atau tampilkan kode QR di layar</li>
+          </ul>
+        </div>
+
+        <div class="feat-card visible" data-mod="attendance">
+          <div class="feat-icon">✅</div>
+          <h3>Absensi Mandiri via QR Code</h3>
+          <p class="desc">Jemaat cukup scan kode QR saat tiba — kehadiran langsung tercatat tanpa petugas harus
+            menginput satu per satu. Sistem otomatis mencegah jemaat terhitung hadir dua kali.</p>
+          <ul class="feat-sub-list">
+            <li>Scan kode QR atau ketik nomor HP/ID jemaat</li>
+            <li>Muncul ucapan "Selamat Datang" saat berhasil</li>
+            <li>Tidak bisa absen dobel di ibadah yang sama</li>
+          </ul>
+        </div>
+
+        <!-- PENGUMUMAN -->
+        <div class="feat-card visible" data-mod="announcement">
+          <div class="feat-icon">📢</div>
+          <h3>Pengumuman Gereja</h3>
+          <p class="desc">Buat dan sebarkan pengumuman gereja secara instan ke seluruh jemaat. Pengumuman tampil di
+            dashboard admin dan aplikasi mobile jemaat.</p>
+          <ul class="feat-sub-list">
+            <li>Buat pengumuman dengan judul dan isi lengkap</li>
+            <li>Atur prioritas dan tanggal tayang</li>
+            <li>Pengumuman langsung terlihat di aplikasi jemaat</li>
+          </ul>
+        </div>
+
+        <!-- ACARA -->
+        <div class="feat-card visible" data-mod="event">
+          <div class="feat-icon">📅</div>
+          <h3>Manajemen Acara & Jadwal Ibadah</h3>
+          <p class="desc">Kelola seluruh acara gereja — ibadah mingguan, hari raya, retret, dan acara khusus — dalam
+            satu kalender terpusat.</p>
+          <ul class="feat-sub-list">
+            <li>Buat acara dengan nama, tanggal, jam, dan lokasi</li>
+            <li>Lihat semua jadwal dalam tampilan kalender</li>
+            <li>Acara otomatis muncul di aplikasi jemaat</li>
+          </ul>
+        </div>
+
+        <!-- KEUANGAN - Online Giving -->
+        <div class="feat-card visible" data-mod="finance">
+          <div class="feat-icon">💸</div>
+          <h3>Persembahan Online (QRIS/Transfer)</h3>
+          <p class="desc">Jemaat bisa memberi persembahan secara digital melalui QRIS atau transfer bank. Setiap
+            transaksi langsung tercatat otomatis di sistem keuangan gereja.</p>
+          <ul class="feat-sub-list">
+            <li>Konfigurasi QRIS dan nomor rekening gereja</li>
+            <li>Jemaat scan QR atau transfer dari aplikasi mobile</li>
+            <li>Riwayat transaksi tercatat otomatis tanpa input manual</li>
+          </ul>
+        </div>
+
+        <div class="feat-card visible" data-mod="finance">
+          <div class="feat-icon">🏗️</div>
+          <h3>Proyek Keuangan, Anggaran & Pledge</h3>
+          <p class="desc">Buat proyek keuangan khusus (p pembangunan gedung, misi) dan kelola anggaran gereja. Jemaat
+            bisa berkomitmen (pledge) untuk proyek tertentu.</p>
+          <ul class="feat-sub-list">
+            <li>Buat proyek dengan target nominal dan batas waktu</li>
+            <li>Atur anggaran per departemen atau kegiatan</li>
+            <li>Jemaat buat janji komitmen donasi dari aplikasi</li>
+            <li>Pantau realisasi anggaran vs realita di dashboard</li>
+          </ul>
+        </div>
+
+        <div class="feat-card visible" data-mod="finance">
+          <div class="feat-icon">🔒</div>
+          <h3>Keamanan Data Antar Gereja</h3>
+          <p class="desc">Jika Anda bergabung bersama ribuan gereja lain di platform ini, data keuangan dan jemaat Anda
+            sepenuhnya terlindungi — tidak ada gereja lain yang bisa melihat data Anda.</p>
+          <ul class="feat-sub-list">
+            <li>Data setiap gereja tersimpan terpisah dan aman</li>
+            <li>Tidak ada kebocoran data antar pengguna</li>
+            <li>Privasi keuangan gereja terjaga sepenuhnya</li>
+          </ul>
+        </div>
+
+        <!-- ARSIP -->
+        <div class="feat-card visible" data-mod="document">
+          <div class="feat-icon">📁</div>
+          <h3>Arsip & Dokumen Gereja</h3>
+          <p class="desc">Simpan semua dokumen penting gereja — surat baptis, notulen rapat majelis, laporan tahunan —
+            dalam satu lemari arsip digital yang terorganisir dan tidak akan hilang.</p>
+          <ul class="feat-sub-list">
+            <li>Buat folder dan subfolder sesuai kebutuhan</li>
+            <li>Unggah file PDF, Word, dan gambar hingga 10MB</li>
+            <li>Dokumen tersimpan aman di server cloud</li>
+            <li>File berbahaya atau mencurigakan otomatis ditolak</li>
+          </ul>
+        </div>
+
+        <!-- FASILITAS -->
+        <div class="feat-card visible" data-mod="facility">
+          <div class="feat-icon">🏢</div>
+          <h3>Peminjaman & Reservasi Ruangan</h3>
+          <p class="desc">Atur peminjaman ruangan gereja secara terpusat. Sistem otomatis mendeteksi apakah ruangan
+            sudah dipesan di waktu yang sama — tidak ada lagi dobel-booking yang memalukan.</p>
+          <ul class="feat-sub-list">
+            <li>Pesan ruangan per tanggal dan jam</li>
+            <li>Sistem menolak otomatis jika waktu bentrok</li>
+            <li>Lihat jadwal pemakaian seluruh ruangan sekaligus</li>
+          </ul>
+        </div>
+
+        <div class="feat-card visible" data-mod="facility">
+          <div class="feat-icon">⚡</div>
+          <h3>Pencatatan Tagihan Listrik & Air</h3>
+          <p class="desc">Catat tagihan listrik dan air setiap bulan. Sistem akan memberi peringatan otomatis jika
+            tagihan bulan ini jauh lebih tinggi dari biasanya — agar pengurus bisa segera menindaklanjuti.</p>
+          <ul class="feat-sub-list">
+            <li>Input angka meteran awal dan akhir</li>
+            <li>Tanda peringatan muncul jika tagihan tidak wajar</li>
+            <li>Riwayat tagihan bulanan tersimpan rapi</li>
+          </ul>
+        </div>
+
+        <!-- LAPORAN -->
+        <div class="feat-card visible" data-mod="analytics">
+          <div class="feat-icon">📊</div>
+          <h3>Laporan Dasar Kehadiran & Jemaat</h3>
+          <p class="desc">Lihat rekap kehadiran ibadah dan data jemaat secara cepat. Cocok untuk laporan rutin rapat
+            majelis dan evaluasi mingguan.</p>
+          <ul class="feat-sub-list">
+            <li>Rekap kehadiran per ibadah dan per periode</li>
+            <li>Daftar jemaat berdasarkan kategori dan status</li>
+            <li>Unduh laporan ke Excel sekali klik</li>
+          </ul>
+        </div>
+
+        <div class="feat-card visible" data-mod="analytics">
+          <div class="feat-icon">📈</div>
+          <h3>Analisis & Laporan Keuangan Lanjutan</h3>
+          <p class="desc">Laporan keuangan mendalam dengan grafik tren, perbandingan periode, dan analisis pertumbuhan
+            kontribusi jemaat. Buat keputusan berdasarkan data nyata.</p>
+          <ul class="feat-sub-list">
+            <li>Grafik tren pemasukan dan pengeluaran bulanan</li>
+            <li>Perbandingan realisasi anggaran vs target</li>
+            <li>Laporan siap saji untuk sidang majelis tahunan</li>
+            <li>Filter data per kategori, proyek, atau departemen</li>
+          </ul>
+        </div>
+
+        <!-- APLIKASI JEMAAT -->
+        <div class="feat-card visible" data-mod="mobile">
+          <div class="feat-icon">📱</div>
+          <h3>Aplikasi Mobile untuk Jemaat</h3>
+          <p class="desc">Jemaat bisa mengakses jadwal ibadah, pengumuman, dan informasi gereja langsung dari ponsel
+            mereka. Bahkan tanpa internet pun jadwal tetap bisa dilihat karena sudah tersimpan di HP.</p>
+          <ul class="feat-sub-list">
+            <li>Login dengan email dan kata sandi</li>
+            <li>Jadwal ibadah tetap tampil meski sinyal buruk</li>
+            <li>Tersedia untuk Android dan iOS</li>
+          </ul>
+        </div>
+
+        <div class="feat-card visible" data-mod="mobile">
+          <div class="feat-icon">💸</div>
+          <h3>Persembahan Digital dari HP</h3>
+          <p class="desc">Jemaat yang tidak bisa hadir secara fisik tetap bisa memberikan persembahan melalui aplikasi.
+            Setiap kiriman langsung tercatat di sistem keuangan gereja — tidak perlu konfirmasi manual.</p>
+          <ul class="feat-sub-list">
+            <li>Jemaat isi nominal dan kirim dari aplikasi mobile</li>
+            <li>Petugas keuangan langsung melihat di dashboard</li>
+            <li>Riwayat pemberian tersimpan di profil jemaat</li>
+          </ul>
+        </div>
+
+        <div class="feat-card visible" data-mod="mobile">
+          <div class="feat-icon">🌐</div>
+          <h3>Sambungkan ke Website Gereja</h3>
+          <p class="desc">Informasi dari sistem ini — seperti jadwal ibadah dan khotbah terbaru — bisa ditampilkan
+            otomatis di website resmi gereja Anda tanpa perlu update manual dua tempat.</p>
+          <ul class="feat-sub-list">
+            <li>Buat kunci akses dari dashboard admin</li>
+            <li>Data khotbah, acara, dll. tersaji otomatis di website</li>
+            <li>Akses tanpa kunci yang valid otomatis ditolak</li>
+          </ul>
+        </div>
+
+        <!-- KOMUNIKASI -->
+        <div class="feat-card visible" data-mod="messaging">
+          <div class="feat-icon">💬</div>
+          <h3>Kirim Pesan Masal (WhatsApp/Email)</h3>
+          <p class="desc">Kirim pengumuman, undangan acara, atau renungan harian ke seluruh jemaat sekaligus melalui
+            WhatsApp atau email. Hemat waktu dan pastikan pesan tersampaikan.</p>
+          <ul class="feat-sub-list">
+            <li>Pilih penerima berdasarkan kategori jemaat</li>
+            <li>Kirim via WhatsApp terintegrasi atau email</li>
+            <li>Riwayat pengiriman tercatat untuk audit</li>
+            <li>Template pesan siap pakai</li>
+          </ul>
+        </div>
+
+        <!-- DIGITAL -->
+        <div class="feat-card visible" data-mod="digital">
+          <div class="feat-icon">📻</div>
+          <h3>Khotbah Digital & Buletin Online</h3>
+          <p class="desc">Unggah rekaman khotbah, materi renungan, dan buletin gereja secara digital. Jemaat bisa
+            mengakses kapan saja dari aplikasi mobile atau website.</p>
+          <ul class="feat-sub-list">
+            <li>Unggah audio/video khotbah dengan deskripsi</li>
+            <li>Buat buletin online dengan editor bawaan</li>
+            <li>Jemaat akses langsung dari aplikasi mobile</li>
+            <li>Arsip khotbah tersimpan rapi dan mudah dicari</li>
+          </ul>
+        </div>
+
+        <div class="feat-card visible" data-mod="digital">
+          <div class="feat-icon">📰</div>
+          <h3>Newsletter & Buletin Email Terjadwal</h3>
+          <p class="desc">Kirim newsletter mingguan atau buletin email secara otomatis ke jemaat. Jadwalkan konten dan
+            sistem akan mengirimkannya pada waktu yang ditentukan.</p>
+          <ul class="feat-sub-list">
+            <li>Buat newsletter dengan editor bawaan</li>
+            <li>Atur jadwal pengiriman otomatis</li>
+            <li>Daftar penerima terkelola berdasarkan preferensi</li>
+            <li>Laporan statistik pengiriman dan pembacaan</li>
+          </ul>
+        </div>
+        <div class="feat-card visible" data-mod="pastoral">
+          <div class="feat-icon">🤝</div>
+          <h3>Catatan Kunjungan Pastoral</h3>
+          <p class="desc">Dokumentasikan setiap kunjungan ke rumah atau rumah sakit jemaat secara terstruktur. Pendeta
+            dan staf bisa melihat riwayat pelayanan seseorang sebelum melakukan kunjungan berikutnya.</p>
+          <ul class="feat-sub-list">
+            <li>Catat jenis kunjungan: ke rumah atau rumah sakit</li>
+            <li>Simpan tujuan kunjungan dan catatan pelayanan</li>
+            <li>Riwayat kunjungan terhubung ke profil jemaat</li>
+            <li>Tandai selesai setelah kunjungan dilaksanakan</li>
+          </ul>
+        </div>
+
+        <div class="feat-card visible" data-mod="pastoral">
+          <div class="feat-icon">🔐</div>
+          <h3>Konseling Rahasia (Confidential)</h3>
+          <p class="desc">Catatan sesi konseling bersifat rahasia dan hanya bisa dibaca oleh Pendeta atau konselor yang
+            berwenang. Staf administrasi tidak bisa mengakses isi percakapan konseling.</p>
+          <ul class="feat-sub-list">
+            <li>Aktifkan mode "Rahasia" untuk sesi konseling tertentu</li>
+            <li>Hanya Pendeta atau konselor yang dapat membuka catatan</li>
+            <li>Kerahasiaan jemaat terjaga sepenuhnya</li>
+          </ul>
+        </div>
+
+        <!-- KELOMPOK SEL -->
+        <div class="feat-card visible" data-mod="smallgroup">
+          <div class="feat-icon">🏠</div>
+          <h3>Manajemen Kelompok Sel</h3>
+          <p class="desc">Kelola seluruh kelompok sel dari satu tempat — siapa anggotanya, kapan dan di mana pertemuan,
+            dan siapa pemimpinnya. Jumlah anggota terupdate otomatis saat ada perubahan.</p>
+          <ul class="feat-sub-list">
+            <li>Buat kelompok sel dengan nama, jadwal, dan lokasi</li>
+            <li>Tetapkan ketua sel dan anggota</li>
+            <li>Jumlah anggota tercatat otomatis</li>
+          </ul>
+        </div>
+
+        <div class="feat-card visible" data-mod="smallgroup">
+          <div class="feat-icon">📝</div>
+          <h3>Absensi Pertemuan Kelompok Sel</h3>
+          <p class="desc">Catat kehadiran setiap pertemuan sel dengan mudah. Data ini membantu Pendeta mengetahui jemaat
+            mana yang mulai jarang aktif sehingga bisa mendapat perhatian lebih.</p>
+          <ul class="feat-sub-list">
+            <li>Buat catatan pertemuan baru beserta topiknya</li>
+            <li>Tandai setiap anggota: hadir, tidak hadir, atau izin</li>
+            <li>Data keaktifan tersedia untuk evaluasi rutin</li>
+          </ul>
+        </div>
+
+        <!-- PELAYANAN -->
+        <div class="feat-card visible" data-mod="ministry">
+          <div class="feat-icon">🙋</div>
+          <h3>Manajemen Pelayanan & Relawan</h3>
+          <p class="desc">Kelola jadwal pelayanan, pendaftaran relawan, dan cocokkan bakat jemaat dengan kebutuhan
+            pelayanan gereja secara otomatis.</p>
+          <ul class="feat-sub-list">
+            <li>Buka pendaftaran relawan untuk acara atau pelayanan tertentu</li>
+            <li>Jemaat daftar langsung dari aplikasi mobile</li>
+            <li>Saring pendaftar berdasarkan bakat dan karunia</li>
+            <li>Atur jadwal pelayanan bergilir tanpa bentrok</li>
+          </ul>
+        </div>
+
+        <!-- PENGATURAN SAAS -->
+        <div class="feat-card visible" data-mod="saas">
+          <div class="feat-icon">⚙️</div>
+          <h3>Kontrol Paket & Fitur Aktif</h3>
+          <p class="desc">Setiap gereja hanya menggunakan fitur sesuai paket yang dipilih. Jika gereja ingin fitur
+            tambahan, tampilannya jelas memandu untuk meningkatkan paket — tidak ada kejutan tagihan.</p>
+          <ul class="feat-sub-list">
+            <li>Fitur tersedia sesuai paket langganan gereja</li>
+            <li>Pesan jelas muncul jika fitur belum tersedia di paket saat ini</li>
+            <li>Upgrade paket langsung aktif tanpa setup ulang</li>
+            <li>Kelola seluruh akun gereja dari satu panel pusat</li>
+          </ul>
+        </div>
+
+        <div class="feat-card visible" data-mod="saas">
+          <div class="feat-icon">🔗</div>
+          <h3>Akses API untuk Integrasi Eksternal</h3>
+          <p class="desc">Hubungkan sistem Eklesia dengan aplikasi lain yang sudah gereja Anda gunakan. API dokumentasi
+            lengkap tersedia untuk pengembang.</p>
+          <ul class="feat-sub-list">
+            <li>Dokumentasi API lengkap dan terstruktur</li>
+            <li>Integrasi dengan website, CRM, atau sistem lain</li>
+            <li>Kunci akses API yang aman dan dapat diatur</li>
+            <li>Rate limiting dan logging untuk keamanan</li>
+          </ul>
+        </div>
+
+        <div class="feat-card visible" data-mod="saas">
+          <div class="feat-icon">🌐</div>
+          <h3>Domain Kustom Website Gereja</h3>
+          <p class="desc">Gunakan domain nama gereja Anda sendiri untuk website yang terhubung langsung dengan sistem
+            Eklesia. Tampilkan jadwal, khotbah, dan pengumuman secara otomatis.</p>
+          <ul class="feat-sub-list">
+            <li>Hubungkan domain milik gereja (contoh: gerejaanda.id)</li>
+            <li>Konten otomatis tersaji dari dashboard Eklesia</li>
+            <li>SSL gratis terpasang otomatis</li>
+            <li>Tidak perlu coding atau maintenance server</li>
+          </ul>
+        </div>
+
+        <div class="feat-card visible" data-mod="saas">
+          <div class="feat-icon">🔑</div>
+          <h3>Autentikasi SSO (Single Sign-On)</h3>
+          <p class="desc">Memudahkan staf dan pengurus gereja masuk ke sistem dengan satu akun terpusat. Cocok untuk
+            gereja sinode dengan banyak cabang.</p>
+          <ul class="feat-sub-list">
+            <li>Login terpusat untuk seluruh pengurus gereja</li>
+            <li>Dukungan SAML, OAuth, atau OpenID Connect</li>
+            <li>Kelola akses pengguna dari satu panel</li>
+            <li>Keamanan enterprise-grade</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="section" id="harga" style="background: var(--deep); border-top: 1px solid var(--border);">
+    <div class="pricing-wrap reveal">
+      <div class="pricing-header">
+        <p class="section-label">Harga Transparan</p>
+        <h2 class="section-title">Pilih Paket yang Sesuai<br>Ukuran Gereja Anda</h2>
+      </div>
+      <div class="pricing-grid">
+        <div class="price-card">
+          <div class="plan-name">Free</div>
+          <div class="plan-price">Gratis <span>/ bulan</span></div>
+          <p class="plan-desc">Cocok untuk rintisan jemaat baru atau gereja berukuran kecil.</p>
+          <ul class="plan-features" style="margin-bottom:0.5rem">
+            <li style="font-size:0.78rem;color:rgba(255,255,255,0.3);padding-left:0"><strong
+                style="color:var(--muted)">Kapasitas:</strong> 50 Anggota · 2 Admin · 1 GB</li>
+          </ul>
+          <ul class="plan-features">
+            <li>📋 Direktori & Database Jemaat</li>
+            <li>🕊️ Pencatatan Kehadiran Ibadah</li>
+            <li>📊 Laporan Dasar Kehadiran & Jemaat</li>
+            <li>📢 Pengumuman Gereja</li>
+            <li class="off">📅 Manajemen Acara & Jadwal</li>
+            <li class="off">👥 Kelompok Sel / Komunitas</li>
+            <li class="off">🩺 Kunjungan & Konseling Pastoral</li>
+            <li class="off">📚 Perpustakaan Dokumen Digital</li>
+            <li class="off">💸 Keuangan & Persembahan Online</li>
+            <li class="off">📱 Aplikasi Mobile Jemaat</li>
+            <li class="off">💬 Kirim Pesan Masal</li>
+          </ul>
+          <a href="#pilot" class="plan-btn plan-btn-outline">Daftar Gratis →</a>
+        </div>
+        <div class="price-card">
+          <div class="plan-name">Basic</div>
+          <div class="plan-price">Rp 149K <span>/ bulan</span></div>
+          <p class="plan-desc">Cocok untuk gereja lokal berukuran kecil-menengah.</p>
+          <ul class="plan-features" style="margin-bottom:0.5rem">
+            <li style="font-size:0.78rem;color:rgba(255,255,255,0.3);padding-left:0"><strong
+                style="color:var(--muted)">Kapasitas:</strong> 200 Anggota · 5 Admin · 5 GB</li>
+          </ul>
+          <ul class="plan-features">
+            <li>Semua fitur Free Plan</li>
+            <li>📅 Manajemen Acara & Jadwal Ibadah</li>
+            <li>👥 Kelompok Sel / Komunitas</li>
+            <li>🩺 Kunjungan & Konseling Pastoral</li>
+            <li>📚 Perpustakaan Dokumen Digital</li>
+            <li>✉️ Dukungan Teknis via Email</li>
+            <li class="off">💸 Keuangan & Persembahan Online</li>
+            <li class="off">🏗️ Proyek Keuangan & Anggaran</li>
+            <li class="off">📊 Analisis & Laporan Keuangan Lanjutan</li>
+            <li class="off">🤝 Manajemen Pelayanan & Relawan</li>
+            <li class="off">💬 Kirim Pesan Masal (WA/Email)</li>
+            <li class="off">🏢 Peminjaman Ruangan & Fasilitas</li>
+            <li class="off">📻 Khotbah Digital & Buletin Online</li>
+            <li class="off">📱 Aplikasi Mobile Jemaat</li>
+          </ul>
+          <a href="#pilot" class="plan-btn plan-btn-outline">Mulai Gratis →</a>
+        </div>
+        <div class="price-card featured">
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">Rp 299K <span>/ bulan</span></div>
+          <p class="plan-desc">Paket paling populer untuk gereja yang ingin mengoptimalkan pelayanan digital dan
+            keuangan.</p>
+          <ul class="plan-features" style="margin-bottom:0.5rem">
+            <li style="font-size:0.78rem;color:rgba(255,255,255,0.3);padding-left:0"><strong
+                style="color:var(--muted)">Kapasitas:</strong> 1.000 Anggota · 20 Admin · 20 GB</li>
+          </ul>
+          <ul class="plan-features">
+            <li>Semua fitur Basic Plan</li>
+            <li>💸 Keuangan & Persembahan Online (QRIS/Transfer)</li>
+            <li>🏗️ Proyek Keuangan, Anggaran & Pledge</li>
+            <li>📊 Analisis & Laporan Keuangan Lanjutan</li>
+            <li>🤝 Manajemen Pelayanan & Relawan</li>
+            <li>💬 Kirim Pesan Masal (WhatsApp/Email)</li>
+            <li>🏢 Peminjaman Ruangan & Fasilitas Gereja</li>
+            <li>📻 Khotbah Digital & Buletin Online</li>
+            <li class="off">📱 Aplikasi Mobile Jemaat</li>
+            <li class="off">📰 Newsletter & Buletin Email Terjadwal</li>
+          </ul>
+          <a href="#pilot" class="plan-btn plan-btn-solid">Mulai Gratis →</a>
+        </div>
+        <div class="price-card">
+          <div class="plan-name">Enterprise</div>
+          <div class="plan-price">Rp 599K <span>/ bulan</span></div>
+          <p class="plan-desc">Solusi lengkap untuk gereja berskala besar, multi-cabang/sinode.</p>
+          <ul class="plan-features" style="margin-bottom:0.5rem">
+            <li style="font-size:0.78rem;color:rgba(255,255,255,0.3);padding-left:0"><strong
+                style="color:var(--muted)">Kapasitas:</strong> Unlimited Anggota · Unlimited Admin · Unlimited Storage
+            </li>
+          </ul>
+          <ul class="plan-features">
+            <li>Semua fitur Pro Plan</li>
+            <li>📱 Aplikasi Mobile Eklesia untuk Jemaat</li>
+            <li>📰 Newsletter & Buletin Email Terjadwal</li>
+            <li>🔗 Akses API untuk Integrasi Eksternal</li>
+          </ul>
+          <a href="#pilot" class="plan-btn plan-btn-outline">Mulai Gratis →</a>
+        </div>
+      </div>
+      <p style="text-align:center; margin-top:2rem; font-size:0.82rem; color:rgba(255,255,255,0.3)">Semua paket termasuk
+        setup gratis · Gereja pilot mendapat harga spesial selamanya · Tidak perlu kartu kredit</p>
+    </div>
+  </section>
+
+  <!-- PILOT -->
+  <section class="section pilot" id="pilot">
+    <div class="pilot-inner reveal">
+      <p class="section-label">Program Eksklusif</p>
+      <h2>Jadilah <em>Gereja Pertama</em><br>yang Bergabung</h2>
+      <p>Kami membuka program pilot untuk <strong style="color:#fff">10 gereja terpilih</strong>. Akses penuh semua
+        fitur Enterprise GRATIS selama 3 bulan, plus pendampingan langsung dari tim kami dari awal hingga siap pakai.
+      </p>
+      <div class="pilot-benefits">
+        <span class="benefit-tag">✓ Semua fitur Enterprise gratis</span>
+        <span class="benefit-tag">✓ Setup & pelatihan gratis</span>
+        <span class="benefit-tag">✓ Harga spesial selamanya</span>
+        <span class="benefit-tag">✓ Masukan Anda bentuk produk ini</span>
+        <span class="benefit-tag">✓ Hubungi kami langsung via WhatsApp</span>
+      </div>
+      <div class="form-box">
+        <form id="pilotForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nama Gereja</label>
+              <input type="text" name="gereja" placeholder="GKI Kebayoran Baru" required>
+            </div>
+            <div class="form-group">
+              <label>Kota</label>
+              <input type="text" name="kota" placeholder="Jakarta" required>
+            </div>
+          </div>
+          <div class="form-row" style="margin-top:1rem">
+            <div class="form-group">
+              <label>Nama Pengurus / PIC</label>
+              <input type="text" name="pic" placeholder="Pdt. Yohanes" required>
+            </div>
+            <div class="form-group">
+              <label>No. WhatsApp</label>
+              <input type="tel" name="wa" placeholder="0812-xxxx-xxxx" required>
+            </div>
+          </div>
+          <div class="form-row" style="margin-top:1rem">
+            <div class="form-group">
+              <label>Alamat Email</label>
+              <input type="email" name="email" placeholder="gereja@example.com" required>
+            </div>
+          </div>
+          <div class="form-row" style="margin-top:1rem">
+            <div class="form-group">
+              <label>Jumlah Jemaat (estimasi)</label>
+              <select name="jumlah_jemaat" required>
+                <option value="">Pilih kisaran...</option>
+                <option>Di bawah 50 orang</option>
+                <option>51 – 200 orang</option>
+                <option>201 – 500 orang</option>
+                <option>Lebih dari 500 orang</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Denominasi</label>
+              <input type="text" name="denominasi" placeholder="Baptis, Pentkosta, dll." required>
+            </div>
+          </div>
+          <button type="submit" class="form-submit">Daftar Sekarang — Gratis 3 Bulan →</button>
+        </form>
+        <p class="form-note">Tim kami akan menghubungi dalam 3×24 jam · Hanya 10 slot tersedia</p>
+      </div>
+    </div>
+  </section>
+
+
+
+  <footer>
+    <p>Dibuat dengan ❤️ untuk melayani <span>gereja-gereja Indonesia</span></p>
+    <p style="margin-top:0.5rem">© 2025 · Program Pilot Masih Terbuka — 10 Slot Tersedia</p>
+  </footer>
+
+  <script>
+    function filterMod(mod, btn) {
+      document.querySelectorAll('.mod-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.feat-card').forEach(card => {
+        if (mod === 'all' || card.dataset.mod === mod) {
+          card.classList.add('visible');
+        } else {
+          card.classList.remove('visible');
+        }
+      });
+    }
+    function switchTab(id, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.getElementById('tab-' + id).classList.add('active');
+      btn.classList.add('active');
+    }
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // FORM — proxy via Vercel Serverless Function
+    document.getElementById('pilotForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const btn = this.querySelector('button[type="submit"]');
+      const originalText = btn.textContent;
+      btn.textContent = 'Mengirim...';
+      btn.disabled = true;
+
+      const data = {};
+      new FormData(this).forEach((v, k) => data[k] = v);
+
+      try {
+        const res = await fetch('/api/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (!res.ok) throw new Error('Gagal');
+        btn.textContent = '✓ Terkirim!';
+        this.reset();
+      } catch {
+        btn.textContent = '✗ Gagal, coba lagi';
+      }
+
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }, 3000);
+    });
+  </script>
 </body>
+
 </html>
